@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { MessageCircle, X, Send, Search, CalendarDays } from "lucide-react";
 import mark from "@/assets/vt-mark.png";
 import { useBooking } from "@/components/BookingModal";
+import { askAssistant } from "@/lib/chat.functions";
 
 const answers: { q: string; a: string }[] = [
   { q: "How is this different from a generic chatbot?", a: "Generic bots follow scripts. A VantageTech agent answers from your own site, FAQs and policies, and hands off to your team when a person is needed." },
@@ -23,14 +24,24 @@ export function ChatWidget() {
 
   useEffect(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), [msgs]);
 
-  const ask = (q: string) => {
-    if (!q.trim()) return;
-    const lower = q.toLowerCase();
-    const hit = answers.find((x) => x.q.toLowerCase().split(" ").filter((w) => w.length > 4).some((w) => lower.includes(w.replace(/[?]/g, ""))));
+  const [busy, setBusy] = useState(false);
+  const ask = async (q: string) => {
+    if (!q.trim() || busy) return;
+    const next: Msg[] = [...msgs, { from: "me", text: q }];
     setTab("chat");
-    setMsgs((m) => [...m, { from: "me", text: q }]);
+    setMsgs([...next, { from: "bot", text: "…" }]);
     setText("");
-    setTimeout(() => setMsgs((m) => [...m, { from: "bot", text: hit ? hit.a : "Good question! The best way to see it in action is a quick demo — tap “Book a demo” below and we'll walk you through it." }]), 600);
+    setBusy(true);
+    try {
+      const { reply } = await askAssistant({
+        data: { messages: next.slice(1).map((m) => ({ role: m.from === "me" ? "user" : "assistant", content: m.text })) },
+      });
+      setMsgs([...next, { from: "bot", text: reply }]);
+    } catch {
+      setMsgs([...next, { from: "bot", text: "Sorry, something went wrong. Please try again or book a demo." }]);
+    } finally {
+      setBusy(false);
+    }
   };
 
   const filtered = answers.filter((x) => x.q.toLowerCase().includes(query.toLowerCase()));
