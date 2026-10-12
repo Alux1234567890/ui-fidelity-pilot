@@ -3,6 +3,7 @@ import { MessageCircle, X, Send, Search, CalendarDays } from "lucide-react";
 import mark from "@/assets/vt-mark.png";
 import { useBooking } from "@/components/BookingModal";
 import { askAssistant } from "@/lib/chat.functions";
+import { Button } from "@/components/ui/button";
 
 const answers: { q: string; a: string }[] = [
   { q: "How is this different from a generic chatbot?", a: "Generic bots follow scripts. A VantageTech agent answers from your own site, FAQs and policies, and hands off to your team when a person is needed." },
@@ -17,6 +18,7 @@ type Msg = { from: "bot" | "me"; text: string };
 export function ChatWidget() {
   const { open: openBooking } = useBooking();
   const [open, setOpen] = useState(false);
+  const [welcomeDismissed, setWelcomeDismissed] = useState(false);
   const [tab, setTab] = useState<"chat" | "search">("chat");
   const [msgs, setMsgs] = useState<Msg[]>([{ from: "bot", text: "Hi! I'm the VantageTech assistant. Ask me anything about how we work. 🙂" }]);
   const [text, setText] = useState("");
@@ -51,6 +53,28 @@ export function ChatWidget() {
 
   return (
     <>
+      {!open && !welcomeDismissed && (
+        <div className="fixed bottom-[6.5rem] right-6 z-50 flex max-w-[calc(100vw-3rem)] items-center gap-1 rounded-3xl border bg-card p-2 text-card-foreground shadow-soft motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 sm:right-8">
+          <span aria-hidden="true" className="absolute -bottom-1.5 right-5 h-3 w-3 rotate-45 border-b border-r bg-card" />
+          <Button
+            variant="ghost"
+            onClick={() => { setWelcomeDismissed(true); setOpen(true); }}
+            className="relative h-auto whitespace-normal rounded-2xl px-3 py-2 text-left text-sm text-ink hover:bg-muted"
+          >
+            How can I assist you today?
+          </Button>
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={() => setWelcomeDismissed(true)}
+            aria-label="Dismiss welcome message"
+            title="Dismiss welcome message"
+            className="relative h-7 w-7 shrink-0 rounded-full text-muted-foreground"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
       {open && (
         <div className="fixed bottom-24 right-4 z-50 flex h-[min(600px,calc(100vh-8rem))] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl border bg-card shadow-lift sm:right-6">
           <div className="bg-primary px-5 pb-5 pt-4 text-primary-foreground">
@@ -112,9 +136,9 @@ export function ChatWidget() {
           )}
         </div>
       )}
-      <button onClick={() => setOpen(!open)} aria-label={open ? "Close chat" : "Open chat"} className="fixed bottom-5 right-4 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-brand-green text-brand-green-foreground shadow-lift transition-transform hover:scale-105 sm:right-6">
+      <Button onClick={() => { setWelcomeDismissed(true); setOpen(!open); }} aria-label={open ? "Close chat" : "Open chat"} className="fixed bottom-5 right-4 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-brand-green text-brand-green-foreground shadow-lift transition-transform hover:bg-brand-green/90 hover:scale-105 [&_svg]:size-7 sm:right-6">
         {open ? <X className="h-7 w-7" /> : <MessageCircle className="h-7 w-7" />}
-      </button>
+      </Button>
     </>
   );
 }
