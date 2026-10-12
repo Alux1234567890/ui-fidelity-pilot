@@ -1,30 +1,64 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { KNOWLEDGE, retrieve } from "./knowledge";
 
-const SYSTEM = `You are the VantageTech website assistant. VantageTech is an AI customer support platform for growing DTC brands and online retailers (US, UK, Canada): AI agents trained on a store's real site, FAQs and policies, seamless handoff to human live chat, and one inbox for website, WhatsApp, Instagram and email. Platform-agnostic (Shopify, WooCommerce, custom), live in days via a single snippet, no code. Be warm, concise (2-4 sentences), never robotic. Never invent pricing, stats or guarantees; for pricing or anything you are unsure of, suggest booking a free demo using the "Book a demo with a human" button. Contact: hello@vantagetech.me.`;
+const RULES = `You are the VantageTech website assistant, a live demo of VantageTech's product. Answer ONLY from the CONTEXT sections provided. Be warm, concise (2-4 short sentences), plain language, never robotic, plain text with no markdown or asterisks. If the context doesn't cover the question, say honestly you're not sure and suggest booking a free demo. Never invent prices, stats, integrations or timelines. Be accurate about channels: only the website chat widget is live; WhatsApp, Instagram and email are on the roadmap. When relevant (pricing, fit, platforms, getting started), point to the "Book a demo with a human" button below the chat.`;
 
 const Input = z.object({
-  messages: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().max(2000) })).max(30),
+  messages: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().min(1).max(2000) })).min(1).max(30),
 });
 
 export const askAssistant = createServerFn({ method: "POST" })
   .inputValidator((d) => Input.parse(d))
   .handler(async ({ data }) => {
-    const key = process.env["OPENAI_API_KEY"];
-    if (!key) return { reply: "Sorry, I'm offline right now — please book a demo and we'll answer you directly." };
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    const key = process.env["LOVABLE_API_KEY"];
+    if (!key) return { reply: "I'm offline right now — please book a demo and we'll answer you directly." };
+
+    const lastUser = [...data.messages].reverse().find((m) => m.role === "user")?.content ?? "";
+    const prevUser = data.messages.filter((m) => m.role === "user").slice(-2, -1)[0]?.content ?? "";
+    const chunks = retrieve(`${lastUser} ${prevUser}`);
+    const context = (chunks.length ? chunks : KNOWLEDGE.slice(0, 3)).map((c) => `## ${c.title}\n${c.text}`).join("\n\n");
+
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
       method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      headers: { "Lovable-API-Key": key, "X-Lovable-AIG-SDK": "fetch", "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
-        max_tokens: 300,
-        messages: [{ role: "system", content: SYSTEM }, ...data.messages],
+        model: "openai/gpt-6-astra",
+        instructions: `${RULES}\n\nCONTEXT:\n${context}`,
+        input: data.messages.map((m) => ({ role: m.role, content: m.content })),
+        reasoning: { effort: "low" },
+        max_output_tokens: 1200,
+        store: false,
+        stream: true,
       }),
     });
-    if (!res.ok) {
-      console.error("OpenAI error", res.status, await res.text());
-      return { reply: "Sorry, I couldn't answer that just now. Try again, or book a demo to talk to our team." };
+
+    if (!res.ok || !res.body) {
+      console.error("AI Gateway error", res.status, await res.text().catch(() => ""));
+      if (res.status === 429) return { reply: "Lots of questions right now — please try again in a moment." };
+      return { reply: "Sorry, I couldn't answer that just now. You can book a demo to talk to our team directly." };
     }
-    const json = (await res.json()) as { choices?: { message?: { content?: string } }[] };
-    return { reply: json.choices?.[0]?.message?.content?.trim() || "Could you rephrase that?" };
+
+    // Consume the SSE stream server-side and return the final text.
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = "";
+    let out = "";
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split("\n");
+      buf = lines.pop() ?? "";
+      for (const line of lines) {
+        if (!line.startsWith("data:")) continue;
+        const payload = line.slice(5).trim();
+        if (!payload || payload === "[DONE]") continue;
+        try {
+          const ev = JSON.parse(payload) as { type?: string; delta?: string };
+          if (ev.type === "response.output_text.delta" && ev.delta) out += ev.delta;
+        } catch { /* partial frame */ }
+      }
+    }
+    return { reply: out.trim() || "I'm not sure about that one — booking a quick demo is the best way to get an answer." };
   });
