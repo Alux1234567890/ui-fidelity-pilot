@@ -22,7 +22,9 @@ export function ChatWidget() {
   const [query, setQuery] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), [msgs]);
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [msgs]);
 
   const [busy, setBusy] = useState(false);
   const ask = async (q: string) => {
