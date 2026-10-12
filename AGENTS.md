@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep theme state in the shared ThemeProvider and express both themes through global semantic tokens so every page surface stays consistent; browser-only preference reads run after hydration.
+- Site chat widget calls the AI provider only from a server function (src/lib/chat.functions.ts) so the API key never reaches the browser.
