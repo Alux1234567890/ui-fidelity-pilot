@@ -345,10 +345,11 @@ function Trust() {
 
 const faqs = [
   { q: "How is this different from a generic chatbot?", a: "Generic bots follow scripts. Your VantageTech agent answers from your own site, FAQs and policies — and hands off to your team the moment a real person is needed." },
-  { q: "Does it work with my existing site/platform?", a: "Yes. It's platform-agnostic — Shopify, WooCommerce, custom builds and more. It goes live with a single snippet." },
-  { q: "What happens when it doesn't know the answer?", a: "It doesn't guess. It passes the conversation to your team with the full context, so the customer never has to repeat themselves." },
-  { q: "How long does setup actually take?", a: "Most stores are live within a few days. We handle the training and branding; you just review and approve." },
-  { q: "Is this only for big brands, or does it work for a small team too?", a: "It's built for growing brands. Small teams often get the most out of it, since the agent takes the repetitive questions off your plate." },
+  { q: "Does it work with my existing site/platform?", a: "Yes — it installs on top of your existing site, with no migration or rebuild. Specific platform questions (Shopify, WooCommerce, custom builds) are best confirmed on your demo call." },
+  { q: "What happens when it doesn't know the answer?", a: "It says so honestly rather than guessing, then hands the conversation to your team with full context — or captures the customer's details for follow-up." },
+  { q: "How long does setup actually take?", a: "Once we have your content, your agent can be branded and live in days — not months." },
+  { q: "Is this only for big brands, or does it work for a small team too?", a: "It's built for growing brands, not just large enterprises — no heavy IT lift required to get started." },
+  { q: "What channels does it support right now?", a: "A chat widget on your own website is live today. WhatsApp, Instagram and email are on the roadmap but not yet available — tell us your timeline on the demo call." },
 ];
 
 function Faq() {
