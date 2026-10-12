@@ -10,7 +10,7 @@ const Input = z.object({
 export const askAssistant = createServerFn({ method: "POST" })
   .inputValidator((d) => Input.parse(d))
   .handler(async ({ data }) => {
-    const key = process.env.OPENAI_API_KEY;
+    const key = process.env["OPENAI_API_KEY"];
     if (!key) return { reply: "Sorry, I'm offline right now — please book a demo and we'll answer you directly." };
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
