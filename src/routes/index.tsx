@@ -7,6 +7,7 @@ import {
 import mark from "@/assets/vt-mark.png";
 import { BookingProvider, useBooking } from "@/components/BookingModal";
 import { ThemeProvider, ThemeToggle } from "@/components/ThemeToggle";
+import { ChatWidget } from "@/components/ChatWidget";
 
 export const Route = createFileRoute("/")({
   component: Page,
@@ -29,6 +30,7 @@ function Page() {
       <Nav />
       <main>
         <Hero />
+        <Stats />
         <Capabilities />
         <Channels />
         <HowItWorks />
@@ -38,7 +40,29 @@ function Page() {
         <FinalCta />
       </main>
       <Footer />
+      <ChatWidget />
     </BookingProvider></ThemeProvider>
+  );
+}
+
+function Stats() {
+  const items = [
+    { k: "24/7", v: "Always-on answers across every channel" },
+    { k: "Days", v: "From kickoff to live, not months" },
+    { k: "1 tap", v: "To reach a real person on your team" },
+    { k: "0 code", v: "A single snippet, branded to your store" },
+  ];
+  return (
+    <section className="border-y bg-card">
+      <div className="reveal mx-auto grid max-w-6xl grid-cols-2 gap-px md:grid-cols-4">
+        {items.map((s) => (
+          <div key={s.k} className="px-5 py-8 text-center">
+            <p className="font-display text-3xl font-extrabold text-ink md:text-4xl">{s.k}</p>
+            <p className="mt-2 text-sm">{s.v}</p>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
