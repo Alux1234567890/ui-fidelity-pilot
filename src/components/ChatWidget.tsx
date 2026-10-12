@@ -6,9 +6,10 @@ import { askAssistant } from "@/lib/chat.functions";
 
 const answers: { q: string; a: string }[] = [
   { q: "How is this different from a generic chatbot?", a: "Generic bots follow scripts. A VantageTech agent answers from your own site, FAQs and policies, and hands off to your team when a person is needed." },
-  { q: "Does it work with Shopify?", a: "Yes. It works with Shopify, WooCommerce, custom builds and more. It goes live with a single snippet." },
-  { q: "How long does setup take?", a: "Most stores are live within a few days. We handle the training and branding; you review and approve." },
-  { q: "Which channels are supported?", a: "Website chat, WhatsApp, Instagram and email, all in one inbox." },
+  { q: "Does it work with Shopify?", a: "" },
+  { q: "How long does setup take?", a: "" },
+  { q: "Which channels are supported?", a: "" },
+  { q: "How much does it cost?", a: "" },
 ];
 
 type Msg = { from: "bot" | "me"; text: string };
