@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import mark from "@/assets/vt-mark.png";
 import { BookingProvider, useBooking } from "@/components/BookingModal";
+import { ThemeProvider, ThemeToggle } from "@/components/ThemeToggle";
 
 export const Route = createFileRoute("/")({
   component: Page,
@@ -24,7 +25,7 @@ export const Route = createFileRoute("/")({
 function Page() {
   useReveal();
   return (
-    <BookingProvider>
+    <ThemeProvider><BookingProvider>
       <Nav />
       <main>
         <Hero />
@@ -37,7 +38,7 @@ function Page() {
         <FinalCta />
       </main>
       <Footer />
-    </BookingProvider>
+    </BookingProvider></ThemeProvider>
   );
 }
 
@@ -94,7 +95,10 @@ function Nav() {
             <a key={l.href} href={l.href} className="text-base font-medium text-ink transition-colors hover:text-brand-green">{l.label}</a>
           ))}
         </nav>
-        <div className="hidden md:block"><DemoButton /></div>
+        <div className="ml-auto flex items-center gap-3 md:ml-0">
+          <ThemeToggle />
+          <div className="hidden md:block"><DemoButton /></div>
+        </div>
         <button className="p-2 text-ink md:hidden" onClick={() => setOpen(!open)} aria-label="Menu">
           {open ? <X /> : <Menu />}
         </button>

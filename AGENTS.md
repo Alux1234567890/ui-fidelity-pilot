@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep theme state in the shared ThemeProvider and express both themes through global semantic tokens so every page surface stays consistent; browser-only preference reads run after hydration.
