@@ -8,6 +8,7 @@ import mark from "@/assets/vt-mark.png";
 import { BookingProvider, useBooking } from "@/components/BookingModal";
 import { ThemeProvider, ThemeToggle } from "@/components/ThemeToggle";
 import { ChatWidget } from "@/components/ChatWidget";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
   component: Page,
@@ -80,9 +81,9 @@ function useReveal() {
 
 function Logo({ className = "" }: { className?: string }) {
   return (
-    <a href="#top" className={`flex items-center gap-2 ${className}`} aria-label="VantageTech home">
-      <img src={mark} alt="" className="h-9 w-9" width={36} height={36} />
-      <span className="font-display text-xl font-extrabold tracking-tight text-ink">
+    <a href="#top" className={`flex min-w-0 items-center gap-2 ${className}`} aria-label="VantageTech home">
+      <img src={mark} alt="" className="h-9 w-9 shrink-0" width={36} height={36} />
+      <span className="truncate font-display text-xl font-extrabold text-ink">
         Vantage<span className="text-brand-green">Tech</span>
       </span>
     </a>
@@ -92,13 +93,13 @@ function Logo({ className = "" }: { className?: string }) {
 function DemoButton({ children = "Book a Demo", size = "md" }: { children?: ReactNode; size?: "md" | "lg" }) {
   const { open } = useBooking();
   return (
-    <button
+    <Button
       onClick={open}
-      className={`group inline-flex items-center gap-2 rounded-full bg-primary font-semibold text-primary-foreground shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift ${size === "lg" ? "px-7 py-4 text-lg" : "px-5 py-2.5 text-base"}`}
+      className={`group h-auto max-w-full whitespace-normal inline-flex items-center gap-2 rounded-full bg-primary font-semibold text-primary-foreground shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift ${size === "lg" ? "px-7 py-4 text-lg" : "px-5 py-2.5 text-base"}`}
     >
       {children}
       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-    </button>
+    </Button>
   );
 }
 
@@ -112,28 +113,28 @@ function Nav() {
   const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur-md">
-      <div className="mx-auto flex h-18 max-w-6xl items-center justify-between px-5 py-3">
+      <div className="mx-auto grid min-h-18 max-w-6xl grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 px-5 py-3 lg:flex lg:justify-between">
         <Logo />
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-8 lg:flex">
           {links.map((l) => (
             <a key={l.href} href={l.href} className="text-base font-medium text-ink transition-colors hover:text-brand-green">{l.label}</a>
           ))}
         </nav>
-        <div className="ml-auto flex items-center gap-3 md:ml-0">
+        <div className="flex shrink-0 items-center gap-2 lg:ml-0">
           <ThemeToggle />
-          <div className="hidden md:block"><DemoButton /></div>
+          <div className="hidden lg:block"><DemoButton /></div>
         </div>
         <button className="p-2 text-ink md:hidden" onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
           {open ? <X /> : <Menu />}
-        </button>
+        </Button>
       </div>
       {open && (
-        <div className="border-t px-5 pb-5 md:hidden">
+        <nav id="mobile-menu" aria-label="Mobile navigation" className="border-t px-5 pb-5 lg:hidden">
           {links.map((l) => (
             <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="block py-3 text-base font-medium text-ink">{l.label}</a>
           ))}
           <div className="pt-2"><DemoButton /></div>
-        </div>
+        </nav>
       )}
     </header>
   );
@@ -154,8 +155,8 @@ function Eyebrow({ children }: { children: ReactNode }) {
 function Hero() {
   return (
     <section id="top" className="hero-glow relative overflow-hidden">
-      <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 py-20 md:grid-cols-[1.1fr_1fr] md:py-28">
-        <div className="reveal">
+      <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 py-20 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] md:py-28">
+        <div className="reveal min-w-0">
           <span className="mb-6 inline-flex items-center gap-2 rounded-full bg-brand-green-soft px-3 py-1.5 text-sm font-semibold text-ink">
             <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-green opacity-60" /><span className="relative h-2 w-2 rounded-full bg-brand-green" /></span>
             AI agents + real humans
@@ -182,7 +183,7 @@ function ChatMock() {
     <div className="reveal relative mx-auto w-full max-w-md">
       <div className="rounded-3xl border bg-card p-5 shadow-lift">
         <div className="flex items-center gap-3 border-b pb-4">
-          <img src={mark} alt="" className="h-9 w-9" />
+          <img src={mark} alt="" className="h-9 w-9 shrink-0" />
           <div>
             <p className="text-base font-semibold text-ink">Northwind Apparel</p>
             <p className="flex items-center gap-1.5 text-sm text-brand-green"><span className="h-2 w-2 rounded-full bg-brand-green" />Online now</p>
@@ -253,13 +254,13 @@ function Channels() {
   ];
   return (
     <section className="bg-primary py-16 text-primary-foreground">
-      <div className="reveal mx-auto flex max-w-6xl flex-col items-center gap-10 px-5 md:flex-row md:justify-between">
+      <div className="reveal mx-auto flex max-w-6xl flex-col items-center gap-10 px-5 lg:flex-row lg:justify-between">
         <h2 className="text-center text-2xl font-bold text-primary-foreground md:text-left md:text-3xl">
           Works across <span className="text-brand-green">every channel.</span>
         </h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="grid w-full max-w-xl grid-cols-2 gap-4 sm:grid-cols-4">
           {ch.map(({ icon: I, label }) => (
-            <div key={label} className="flex flex-col items-center gap-2 rounded-2xl bg-primary-foreground/10 px-6 py-5">
+            <div key={label} className="flex flex-col items-center gap-2 min-w-0 rounded-2xl bg-primary-foreground/10 px-3 py-5">
               <I className="h-7 w-7 text-brand-green" />
               <span className="text-base font-medium">{label}</span>
             </div>
@@ -366,15 +367,16 @@ function Faq() {
             const isOpen = open === i;
             return (
               <div key={f.q}>
-                <button
+                <Button variant="ghost"
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                  className="grid h-auto w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-4 whitespace-normal rounded-none px-5 py-5 text-left hover:bg-muted"
                   aria-expanded={isOpen}
+                  aria-controls={`faq-answer-${i}`}
                 >
                   <span className="text-lg font-semibold text-ink">{f.q}</span>
                   <ChevronDown className={`h-5 w-5 shrink-0 text-brand-green transition-transform ${isOpen ? "rotate-180" : ""}`} />
-                </button>
-                <div className={`grid transition-all duration-300 ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+                </Button>
+                <div id={`faq-answer-${i}`} aria-hidden={!isOpen} className={`grid transition-all duration-300 ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
                   <div className="overflow-hidden">
                     <p className="px-6 pb-6 text-base leading-relaxed">{f.a}</p>
                   </div>
@@ -406,9 +408,9 @@ function FinalCta() {
 function CtaInverse() {
   const { open } = useBooking();
   return (
-    <button onClick={open} className="group inline-flex items-center gap-2 rounded-full bg-brand-green px-7 py-4 text-lg font-semibold text-brand-green-foreground transition-all hover:-translate-y-0.5">
+    <Button onClick={open} className="group h-auto max-w-full whitespace-normal inline-flex items-center gap-2 rounded-full bg-brand-green px-7 py-4 text-lg font-semibold text-brand-green-foreground transition-all hover:-translate-y-0.5">
       Book a Free Demo <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
-    </button>
+    </Button>
   );
 }
 
