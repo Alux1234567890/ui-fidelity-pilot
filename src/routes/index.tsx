@@ -128,7 +128,8 @@ function Nav() {
           {open ? <X /> : <Menu />}
         </Button>
       </div>
-      {open && (
+      {open {open && ({open && ( (
+        <nav className="border-t px-5 pb-5 md:hidden" aria-label="Mobile menu">
         <nav id="mobile-menu" aria-label="Mobile navigation" className="border-t px-5 pb-5 lg:hidden">
           {links.map((l) => (
             <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="block py-3 text-base font-medium text-ink">{l.label}</a>

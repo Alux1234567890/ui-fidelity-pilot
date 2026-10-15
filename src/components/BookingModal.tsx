@@ -59,7 +59,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       {children}
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-primary/60 p-3 backdrop-blur-sm animate-in fade-in"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-primary/60 p-2 sm:p-4 backdrop-blur-sm animate-in fade-in"
           onClick={() => setOpen(false)}
           role="dialog"
           aria-modal="true"

@@ -81,9 +81,9 @@ export function ChatWidget() {
       {open && (
         <div role="dialog" aria-label="VantageTech chat" className="fixed bottom-24 right-4 z-50 flex h-[min(600px,calc(100dvh-8rem))] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl border bg-card shadow-lift sm:right-6">
           <div className="bg-primary px-5 pb-5 pt-4 text-primary-foreground">
-            <div className="mx-auto flex w-fit rounded-full bg-primary-foreground/10 p-1">
+            <div className="mx-auto flex w-fit rounded-full bg-primary-foreground/10 p-1" role="tablist">
               {(["chat", "search"] as const).map((t) => (
-                <Button variant="ghost" key={t} onClick={() => setTab(t)} aria-pressed={tab === t} className={`h-auto rounded-full px-4 py-1.5 text-sm font-semibold hover:bg-primary-foreground/20 hover:text-primary-foreground ${tab === t ? "bg-primary-foreground/20" : "opacity-80 hover:opacity-100"}`}>
+                <Button variant="ghost" key={t} onClick={() => setTab(t)} role="tab" aria-selected={tab === t} aria-pressed={tab === t} className={`h-auto rounded-full px-4 py-1.5 text-sm font-semibold hover:bg-primary-foreground/20 hover:text-primary-foreground ${tab === t ? "bg-primary-foreground/20" : "opacity-80 hover:opacity-100"}`}>
                   {t === "chat" ? <MessageCircle className="h-4 w-4" /> : <Search className="h-4 w-4" />}
                   {t === "chat" ? "Messages" : "Questions"}
                 </Button>
