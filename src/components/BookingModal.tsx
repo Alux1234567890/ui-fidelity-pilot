@@ -84,7 +84,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
                 ref={widgetRef}
                 className="calendly-inline-widget"
                 data-url={CALENDLY_URL}
-                style={{ minWidth: 300, height: 650 }}
+                style={{ minWidth: "100%", height: 650 }}
               />
             </div>
           </div>

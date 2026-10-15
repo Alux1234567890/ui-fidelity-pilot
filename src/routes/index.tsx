@@ -123,7 +123,7 @@ function Nav() {
           <ThemeToggle />
           <div className="hidden md:block"><DemoButton /></div>
         </div>
-        <button className="p-2 text-ink md:hidden" onClick={() => setOpen(!open)} aria-label="Menu">
+        <button className="p-2 text-ink md:hidden" onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
           {open ? <X /> : <Menu />}
         </button>
       </div>
