@@ -1,9 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export const CALENDLY_URL = "https://calendly.com/founder-vantagetech/30min";
 const SCRIPT_SRC = "https://assets.calendly.com/assets/external/widget.js";
-
 type Ctx = { open: () => void };
 const BookingContext = createContext<Ctx>({ open: () => {} });
 export const useBooking = () => useContext(BookingContext);
@@ -13,83 +13,54 @@ declare global {
     Calendly?: { initInlineWidget: (o: { url: string; parentElement: HTMLElement }) => void };
   }
 }
-
 function loadScript(): Promise<void> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     if (window.Calendly) return resolve();
-    let s = document.querySelector<HTMLScriptElement>(`script[src="${SCRIPT_SRC}"]`);
-    if (!s) {
-      s = document.createElement("script");
-      s.src = SCRIPT_SRC;
-      s.async = true;
-      document.body.appendChild(s);
+    let script = document.querySelector<HTMLScriptElement>(`script[src="${SCRIPT_SRC}"]`);
+    if (!script) {
+      script = document.createElement("script");
+      script.src = SCRIPT_SRC;
+      script.async = true;
+      document.body.appendChild(script);
     }
-    s.addEventListener("load", () => resolve(), { once: true });
+    const element = script;
+    element.addEventListener("load", () => resolve(), { once: true });
+    element.addEventListener("error", () => { element.remove(); reject(new Error("Calendar unavailable")); }, { once: true });
   });
 }
-
 export function BookingProvider({ children }: { children: ReactNode }) {
   const [isOpen, setOpen] = useState(false);
+  const [failed, setFailed] = useState(false);
   const widgetRef = useRef<HTMLDivElement>(null);
   const open = useCallback(() => setOpen(true), []);
-
-  useEffect(() => {
-    void loadScript();
-  }, []);
-
   useEffect(() => {
     if (!isOpen) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
+    let cancelled = false;
+    setFailed(false);
     loadScript().then(() => {
-      const el = widgetRef.current;
-      if (el && window.Calendly && !el.querySelector("iframe")) {
-        window.Calendly.initInlineWidget({ url: CALENDLY_URL, parentElement: el });
+      if (cancelled) return;
+      const element = widgetRef.current;
+      if (element && window.Calendly && !element.querySelector("iframe")) {
+        window.Calendly.initInlineWidget({ url: CALENDLY_URL, parentElement: element });
       }
-    });
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
+    }).catch(() => { if (!cancelled) setFailed(true); });
+    return () => { cancelled = true; };
   }, [isOpen]);
-
   return (
     <BookingContext.Provider value={{ open }}>
       {children}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-primary/60 p-2 sm:p-4 backdrop-blur-sm animate-in fade-in"
-          onClick={() => setOpen(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="booking-title"
-        >
-          <div
-            className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-card shadow-lift animate-in zoom-in-95"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b px-5 py-4">
-              <h2 id="booking-title" className="text-lg font-bold">Book a call on Calendly</h2>
-              <button
-                onClick={() => setOpen(false)}
-                aria-label="Close"
-                className="rounded-full p-2 text-ink transition-colors hover:bg-muted"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="overflow-y-auto">
-              <div
-                ref={widgetRef}
-                className="calendly-inline-widget"
-                data-url={CALENDLY_URL}
-                style={{ minWidth: "100%", height: 650 }}
-              />
-            </div>
+      <Dialog open={isOpen} onOpenChange={setOpen}>
+        <DialogContent className="z-[60] flex max-h-[calc(100dvh-1.5rem)] w-[calc(100%-1.5rem)] max-w-3xl flex-col gap-0 overflow-hidden rounded-2xl bg-card p-0 shadow-lift">
+          <div className="shrink-0 border-b px-5 py-5 pr-14">
+            <DialogTitle className="text-lg leading-snug font-bold">Book a call with us</DialogTitle>
+            <DialogDescription className="sr-only">Choose a time for your free VantageTech demo on Calendly.</DialogDescription>
           </div>
-        </div>
-      )}
+          <div className="min-h-0 overflow-y-auto overscroll-contain">
+            {failed && <div className="p-6 text-center"><p>We couldn't load the calendar here.</p><Button asChild variant="outline" className="mt-4"><a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">Book a call with us<span className="sr-only"> on Calendly in a new tab</span></a></Button></div>}
+            <div ref={widgetRef} className="calendly-inline-widget h-[650px] min-w-0" data-url={CALENDLY_URL} />
+          </div>
+        </DialogContent>
+      </Dialog>
     </BookingContext.Provider>
   );
 }

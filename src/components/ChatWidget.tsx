@@ -57,7 +57,7 @@ export function ChatWidget() {
   return (
     <>
       {!open && !welcomeDismissed && (
-        <div className="fixed bottom-[6.5rem] right-6 z-50 flex max-w-[calc(100vw-3rem)] items-center gap-1 rounded-3xl border bg-card p-2 text-card-foreground shadow-soft motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 sm:right-8">
+        <div className="fixed bottom-[6.5rem] right-6 z-[55] flex max-w-[calc(100vw-3rem)] items-center gap-1 rounded-3xl border bg-card p-2 text-card-foreground shadow-soft motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 sm:right-8">
           <span aria-hidden="true" className="absolute -bottom-1.5 right-5 h-3 w-3 rotate-45 border-b border-r bg-card" />
           <Button
             variant="ghost"
@@ -79,7 +79,7 @@ export function ChatWidget() {
         </div>
       )}
       {open && (
-        <div role="dialog" aria-label="VantageTech chat" className="fixed bottom-24 right-4 z-50 flex h-[min(600px,calc(100dvh-8rem))] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl border bg-card shadow-lift sm:right-6">
+        <div role="dialog" aria-label="VantageTech chat" className="fixed bottom-24 right-4 z-[55] flex h-[min(600px,calc(100dvh-8rem))] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl border bg-card shadow-lift sm:right-6">
           <div className="bg-primary px-5 pb-5 pt-4 text-primary-foreground">
             <div className="mx-auto flex w-fit rounded-full bg-primary-foreground/10 p-1" role="tablist">
               {(["chat", "search"] as const).map((t) => (
@@ -139,7 +139,7 @@ export function ChatWidget() {
           )}
         </div>
       )}
-      <Button onClick={() => { setWelcomeDismissed(true); setOpen(!open); }} aria-label={open ? "Close chat" : "Open chat"} className="fixed bottom-5 right-4 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-brand-green text-brand-green-foreground shadow-lift transition-transform hover:bg-brand-green/90 hover:scale-105 [&_svg]:size-7 sm:right-6">
+      <Button onClick={() => { setWelcomeDismissed(true); setOpen(!open); }} aria-label={open ? "Close chat" : "Open chat"} className="fixed bottom-5 right-4 z-[55] flex h-16 w-16 items-center justify-center rounded-full bg-brand-green text-brand-green-foreground shadow-lift transition-transform hover:bg-brand-green/90 hover:scale-105 [&_svg]:size-7 sm:right-6">
         {open ? <X className="h-7 w-7" /> : <MessageCircle className="h-7 w-7" />}
       </Button>
     </>
