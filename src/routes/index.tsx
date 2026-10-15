@@ -108,29 +108,33 @@ const links = [
   { href: "#how", label: "How it works" },
   { href: "#faq", label: "FAQ" },
 ];
-
 function Nav() {
   const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur-md">
-      <div className="mx-auto grid min-h-18 max-w-6xl grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 px-5 py-3 lg:flex lg:justify-between">
+      <div className="mx-auto flex h-18 max-w-6xl items-center justify-between px-5 py-3">
         <Logo />
-        <nav className="hidden items-center gap-8 lg:flex">
+        <nav className="hidden items-center gap-8 md:flex">
           {links.map((l) => (
             <a key={l.href} href={l.href} className="text-base font-medium text-ink transition-colors hover:text-brand-green">{l.label}</a>
           ))}
         </nav>
-        <div className="flex shrink-0 items-center gap-2 lg:ml-0">
+        <div className="ml-auto flex items-center gap-3 md:ml-0">
           <ThemeToggle />
-          <div className="hidden lg:block"><DemoButton /></div>
+          <div className="hidden md:block"><DemoButton /></div>
         </div>
-        <button className="p-2 text-ink md:hidden" onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
+        <button
+          className="p-2 text-ink md:hidden"
+          onClick={() => setOpen(!open)}
+          aria-label="Menu"
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+        >
           {open ? <X /> : <Menu />}
-        </Button>
+        </button>
       </div>
-      {open {open && ({open && ( (
-        <nav className="border-t px-5 pb-5 md:hidden" aria-label="Mobile menu">
-        <nav id="mobile-menu" aria-label="Mobile navigation" className="border-t px-5 pb-5 lg:hidden">
+      {open && (
+        <nav id="mobile-menu" className="border-t px-5 pb-5 md:hidden" aria-label="Mobile navigation">
           {links.map((l) => (
             <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="block py-3 text-base font-medium text-ink">{l.label}</a>
           ))}
@@ -139,6 +143,7 @@ function Nav() {
       )}
     </header>
   );
+}
 }
 
 function Section({ id, children, muted = false }: { id?: string; children: ReactNode; muted?: boolean }) {
