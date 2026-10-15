@@ -11,3 +11,4 @@
 
 - Keep theme state in the shared ThemeProvider and express both themes through global semantic tokens so every page surface stays consistent; browser-only preference reads run after hydration.
 - Site chat widget answers via a server function (src/lib/chat.functions.ts) calling Lovable AI Gateway, grounded by keyword retrieval over src/lib/knowledge.ts; keys stay server-side.
+- Booking uses the shared Radix Dialog to keep focus, dismissal, scroll locking, and small-screen sizing consistent.
