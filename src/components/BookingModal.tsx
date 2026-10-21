@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, ty
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
-export const CALENDLY_URL = "https://calendly.com/founder-vantagetech/30min";
+export const CALENDLY_URL = "https://calendly.com/ialuko-2203833-stu/30min";
 const SCRIPT_SRC = "https://assets.calendly.com/assets/external/widget.js";
 type Ctx = { open: () => void };
 const BookingContext = createContext<Ctx>({ open: () => {} });
