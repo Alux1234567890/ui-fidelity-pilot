@@ -35,10 +35,16 @@ jobs:
       - name: Build project
         run: bun run build
 
+      - name: Verify build directory
+        run: |
+          if [ -d "dist" ]; then echo "target_dir=./dist" >> $GITHUB_ENV;
+          elif [ -d "build" ]; then echo "target_dir=./build" >> $GITHUB_ENV;
+          else echo "target_dir=./" >> $GITHUB_ENV; fi
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ${{ env.target_dir }}
 
       - name: Deploy to GitHub Pages
         id: deployment
