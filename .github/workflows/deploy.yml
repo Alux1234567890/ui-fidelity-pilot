@@ -35,11 +35,19 @@ jobs:
       - name: Build project
         run: bun run build
 
-      - name: Verify build directory
+      - name: Verify and Setup Build Directory
         run: |
-          if [ -d "dist" ]; then echo "target_dir=./dist" >> $GITHUB_ENV;
-          elif [ -d "build" ]; then echo "target_dir=./build" >> $GITHUB_ENV;
-          else echo "target_dir=./" >> $GITHUB_ENV; fi
+          echo "Checking directory layout..."
+          ls -la
+          if [ -d "dist" ]; then
+            echo "target_dir=./dist" >> $GITHUB_ENV
+          elif [ -d "build" ]; then
+            echo "target_dir=./build" >> $GITHUB_ENV
+          elif [ -d ".anchor" ]; then
+            echo "target_dir=./.anchor" >> $GITHUB_ENV
+          else
+            echo "target_dir=./" >> $GITHUB_ENV
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
