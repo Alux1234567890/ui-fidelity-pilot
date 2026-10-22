@@ -54,6 +54,20 @@ bundle is the worker in `dist/server` plus the static files in `dist/client`.
 
 ## Deploying
 
+### Netlify
+
+The connected Netlify project builds with Bun and publishes `dist/client`.
+On Netlify, `vite.config.ts` selects Nitro's `netlify` preset, which also emits
+the server-rendering and server-function handler into
+`.netlify/functions-internal`. Deploy both through Netlify's normal Git build;
+publishing the client directory alone does not deploy the server.
+
+Set `LOVABLE_API_KEY` in the Netlify project's environment variables with
+Functions scope to enable the chat assistant. Without it, the site still works
+and chat returns its existing offline message. Keep the value server-side.
+
+Other environments retain the Cloudflare target described below.
+
 1. **Publish from Lovable** — the default path, no extra accounts or secrets:
    the preview's Publish button ships the current code, and the chat key is
    already wired up on the hosted backend.
