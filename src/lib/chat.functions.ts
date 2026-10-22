@@ -12,7 +12,7 @@ const Input = z.object({
 });
 
 export const askAssistant = createServerFn({ method: "POST" })
-  .inputValidator((d) => Input.parse(d))
+  .validator((d) => Input.parse(d))
   .handler(async ({ data }) => {
     const key = process.env["LOVABLE_API_KEY"];
     if (!key)
