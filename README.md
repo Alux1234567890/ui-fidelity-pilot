@@ -71,6 +71,15 @@ bundle is the worker in `dist/server` plus the static files in `dist/client`.
    and serve it with `npx wrangler dev` (or `npx wrangler deploy`), passing
    `LOVABLE_API_KEY` in the server environment.
 
+### Netlify
+
+`netlify.toml` publishes `dist/` and the Vite configuration selects Nitro’s
+Netlify preset when running on Netlify. Nitro generates the server function
+for page rendering and chat, along with the static assets and routing rules.
+This overrides the older `dist/client` publish setting. Builds outside Netlify
+keep the Cloudflare target. Configure `LOVABLE_API_KEY` in the server runtime
+for AI answers; without it, chat shows its booking fallback.
+
 ### Why not GitHub Pages
 
 Pages serves static files only. This site has no pre-rendered `index.html` —
