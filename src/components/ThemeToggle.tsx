@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -6,12 +6,12 @@ const ThemeContext = createContext({ dark: false, toggle: () => {} });
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [dark, setDark] = useState(false);
+  const savedPreference = useRef<string | null>(null);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-color-scheme: dark)");
-    let saved: string | null = null;
     try {
-      saved = localStorage.getItem("vantagetech-theme");
+      savedPreference.current = localStorage.getItem("vantagetech-theme");
     } catch {
       /* Storage may be unavailable. */
     }
@@ -19,14 +19,19 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setDark(value);
       document.documentElement.classList.toggle("dark", value);
     };
-    apply(saved === "dark" || (saved !== "light" && media.matches));
+    const applyPreference = () => {
+      const saved = savedPreference.current;
+      apply(saved === "dark" || (saved !== "light" && media.matches));
+    };
+    applyPreference();
     const onChange = (event: MediaQueryListEvent) => {
-      if (saved !== "light" && saved !== "dark") apply(event.matches);
+      if (savedPreference.current !== "light" && savedPreference.current !== "dark")
+        apply(event.matches);
     };
     const onStorage = (event: StorageEvent) => {
-      if (event.key !== "vantagetech-theme") return;
-      saved = event.newValue;
-      apply(saved === "dark" || (saved !== "light" && media.matches));
+      if (event.key !== "vantagetech-theme" && event.key !== null) return;
+      savedPreference.current = event.newValue;
+      applyPreference();
     };
     media.addEventListener("change", onChange);
     window.addEventListener("storage", onStorage);
@@ -38,6 +43,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const toggle = () => {
     const next = !dark;
+    savedPreference.current = next ? "dark" : "light";
     setDark(next);
     document.documentElement.classList.toggle("dark", next);
     try {
