@@ -54,6 +54,17 @@ bundle is the worker in `dist/server` plus the static files in `dist/client`.
 
 ## Deploying
 
+### Netlify
+
+`netlify.toml` selects Nitro's `netlify` preset and publishes `dist/`, overriding
+the publish directory in the Netlify UI. With the installed Nitro version, this
+preset writes static assets to `dist/` and the SSR server function to
+`.netlify/functions-internal/`; Netlify bundles that function automatically.
+Do not use `dist/client` or `.output/public` for this preset. Cloudflare builds
+outside Netlify continue to use the default Cloudflare preset.
+
+### Other deployment options
+
 1. **Publish from Lovable** — the default path, no extra accounts or secrets:
    the preview's Publish button ships the current code, and the chat key is
    already wired up on the hosted backend.
