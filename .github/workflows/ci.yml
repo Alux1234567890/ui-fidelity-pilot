@@ -1,0 +1,54 @@
+name: CI
+
+# Every push and pull request is checked the same way, so a commit on GitHub is
+# known to install, type-check, lint, test and build from the committed files.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.3
+
+      - name: Install dependencies from the committed lockfile
+        run: bun install --frozen-lockfile
+
+      - name: Type-check
+        run: bun run typecheck
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Test
+        run: bun run test
+
+      - name: Build
+        run: bun run build
+
+      - name: Upload the deployable bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-worker-bundle
+          path: |
+            dist
+            .wrangler/deploy/config.json
+          retention-days: 7
