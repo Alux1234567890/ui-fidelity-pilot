@@ -8,7 +8,9 @@ describe("Booking destination", () => {
   });
   it("provides the same calendar in chatbot booking knowledge", () => {
     for (const title of ["Getting started / booking a demo", "Contact"]) {
-      expect(KNOWLEDGE.find(section => section.title === title)?.text).toContain("https://calendly.com/ialuko-2203833-stu/30min");
+      expect(KNOWLEDGE.find((section) => section.title === title)?.text).toContain(
+        "https://calendly.com/ialuko-2203833-stu/30min",
+      );
     }
   });
 });
